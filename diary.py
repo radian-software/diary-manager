@@ -58,7 +58,12 @@ def parse_date(date_string=None):
         raise complaint
 
 
-REPO_PATH = os.path.split(path.realpath(__file__))[0]
+REPO_PATH = os.getenv("DIARY_LOCATION")
+if not REPO_PATH:
+    print("diary: you need to set DIARY_LOCATION")
+    sys.exit(1)
+
+
 ENTRIES_PATH = path.join(REPO_PATH, "entries")
 
 
