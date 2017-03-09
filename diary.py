@@ -185,11 +185,17 @@ def task_edit(*args):
                        ("Edit entry for {}" if old_contents
                         else "Create entry for {}").format(date_string)):
                 raise InternalError
+        else:
+            print("No changes.")
     else:
+        print("Edit aborted.")
         new_contents = file_contents(filepath)
         if new_contents != old_contents:
-            if not run("git", "checkout", filepath):
-                raise InternalError
+            user_response = input("Revert changes to entry for {}? [y/N] "
+                                  .format(date_string))
+            if user_response and user_response in "yY":
+                if not run("git", "checkout", filepath):
+                    raise InternalError
 
 
 def task_rm(*args):
