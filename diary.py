@@ -129,7 +129,6 @@ def format_date(date):
     return date.strftime(DATE_FORMAT)
 
 
-
 def entry_filepath(date):
     date_string = format_date(date)
     filename = "{}.md.gpg".format(date_string)
