@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+cd $0:A:h
+
+venv/bin/python diary.py $@
