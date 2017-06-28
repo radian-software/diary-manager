@@ -276,10 +276,6 @@ def task_git(*args):
     return task_run("git", *args)
 
 
-def task_push(*args):
-    return task_git("push", *args)
-
-
 USAGE_MESSAGE = """\
 usage:
     diary ls
@@ -289,7 +285,6 @@ usage:
     diary cp [ <old-date> ] <new-date>
     diary run [ <shell-command> ... ]
     diary git [ <git-args> ... ]
-    diary push [ <git-push-args> ... ]
     diary help
 
 date format:
@@ -304,7 +299,7 @@ def task_help(*args):
     print(USAGE_MESSAGE)
 
 
-TASKS = ("ls", "edit", "rm", "mv", "cp", "run", "git", "push", "help")
+TASKS = ("ls", "edit", "rm", "mv", "cp", "run", "git", "help")
 
 
 def main(*args):
