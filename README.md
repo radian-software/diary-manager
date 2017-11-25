@@ -132,7 +132,8 @@ file extension than `.md`.
     $ cd diary-manager
     $ pip3 install --editable .
 
-This will install a symlink to `diary.py`
+This will install a symlink to `diary` in your system's binary
+directory.
 
 [emacs]: https://www.gnu.org/software/emacs/
 [epa]: https://www.gnu.org/software/emacs/manual/html_mono/epa.html
