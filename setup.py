@@ -7,7 +7,7 @@ setup(
     description="If you want your diary on the command line.",
     license="MIT",
     install_requires=["dateutils"],
-    name="diary_manager",
+    name="diary-manager",
     scripts=["diary"],
     url="https://github.com/raxod502/diary-manager",
     version="1.0",

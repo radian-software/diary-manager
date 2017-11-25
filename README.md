@@ -124,7 +124,7 @@ a single string):
     ((nil . ((epa-file-encrypt-to . "<your name>"))))
 
 You may wish to install package [markdown-mode], or choose a different
-file extension
+file extension than `.md`.
 
 ## Development
 
