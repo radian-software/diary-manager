@@ -19,4 +19,4 @@ The format is based on [Keep a Changelog].
 * MIT license
 * Changelog
 
-[keep a changelog]: [Keep a Changelog]: http://keepachangelog.com/
+[keep a changelog]: http://keepachangelog.com/
