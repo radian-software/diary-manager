@@ -1,73 +1,78 @@
-**`diary-manager`**: if you want your diary on the command line.
+**`diary-manager`**: simple command-line tool and Emacs package for
+managing diary entries.
 
 <!-- toc -->
 
 - [TL;DR](#tldr)
-  * [What is it](#what-is-it)
-  * [How do I get it](#how-do-i-get-it)
-- [Installation](#installation)
-  * [Install dependencies](#install-dependencies)
-    + [macOS](#macos)
-  * [Install `diary-manager`](#install-diary-manager)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Version control](#version-control)
-- [Encryption](#encryption)
+- [Command-line tool](#command-line-tool)
+  * [Installation](#installation)
+  * [Usage](#usage)
+  * [Configuration](#configuration)
+- [Emacs package](#emacs-package)
+  * [Installation](#installation-1)
+  * [Usage](#usage-1)
+  * [Configuration](#configuration-1)
 - [Development](#development)
+- [FAQ](#faq)
+  * [How can I encrypt my diary entries?](#how-can-i-encrypt-my-diary-entries)
+  * [Why does the Emacs package use the prefix `dm`?](#why-does-the-emacs-package-use-the-prefix-dm)
 
 <!-- tocstop -->
 
 ## TL;DR
 
-### What is it
-
-`diary-manager` is a simple tool for managing (possibly encrypted,
-possibly version-controlled) diary entries on the command line.
-
-### How do I get it
+`diary-manager` is a way for you to maintain a collection of daily
+diary entries. It comes with a command-line tool and an Emacs package;
+both expose the same functionality. You can install the command-line
+tool with [Pip]:
 
     $ pip3 install git+https://github.com/raxod502/diary-manager.git
 
-## Installation
+You can install the Emacs package with [`straight.el`][straight.el]:
 
-### Install dependencies
+    (straight-use-package
+     '(diary-manager :host git :repo "raxod502/diary-manager"))
 
-#### macOS
+To get started, create a directory to hold your diary entries. You can
+put it in a Git repository if you want a version-controlled diary. For
+the command-line tool, export the environment variable
+`$DIARY_LOCATION` to this directory. The Emacs package will use this
+environment variable by default, but you can also set the Emacs user
+option `dm-diary-location`.
 
-Install the Xcode Command Line Tools:
-
-    $ xcode-select --install
-
-Install [Homebrew]:
-
-    $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-Install [Python 3][python]:
-
-    $ brew install python3
-
-### Install `diary-manager`
-
-    $ pip3 install git+https://github.com/raxod502/diary-manager.git
-
-## Usage
-
-First, create your diary repository (any directory will work; it only
-has to be a Git repository if you want version control support):
-
-    $ mkdir diary
-    $ cd diary
-    $ git init
-
-Then export the environment variable `$DIARY_LOCATION` to this
-directory, or some subdirectory. This is the directory inside which
-diary entries will be placed.
-
-You can make an entry for the current day with:
+Using the command-line tool, make a diary entry for the current day as
+follows:
 
     $ diary
 
-For more information, refer to the usage message:
+This will open the editor configured in the environment variable
+`$DIARY_EDITOR`, or `$EDITOR`, or as a fallback `vi(1)`. When you are
+finished, save the file and exit your editor. If your
+`$DIARY_LOCATION` is in a Git repository, a commit will automatically
+be created.
+
+Using the Emacs package, make a diary entry for the current day as
+follows:
+
+    M-x dm-edit
+
+When you are finished, press `C-c C-c` to save the entry, making a
+commit if `$DIARY_LOCATION` is in a Git repository, and kill the
+buffer.
+
+## Command-line tool
+### Installation
+
+First, you will need to install [Python 3][python] and [Pip]. Then,
+you may run the following command to install the command-line tool:
+
+    $ pip3 install git+https://github.com/raxod502/diary-manager.git
+
+This will install a binary named `diary`.
+
+### Usage
+
+The commands are mostly self-explanatory:
 
     usage:
         diary ls
@@ -85,60 +90,146 @@ For more information, refer to the usage message:
         <month>-<day-of-month>
         <year>-<month>-<day-of-month>
 
-Note that if you don't specify the month (or year), `diary-manager`
-assumes you mean a day in the past (rather than the future).
+If a date is omitted, it defaults to the current date. Otherwise, you
+can specify an offset in days from the current date, or give a full or
+partial date in year-month-day format. (Partial dates are interpreted
+as dates in the past; if you wish to specify a future date, either
+give a full date or use an offset.)
 
-## Configuration
+`diary run` and `diary git` just change working directory to
+`$DIARY_LOCATION` and then run the command provided.
 
-By default, entries are edited in `$EDITOR` (or `vi`, by default). You
-can override this by exporting `$DIARY_EDITOR`.
+### Configuration
 
-By default, entries are created in the format `<date>.md`. You can
-customize the `<date>` format by exporting `$DIARY_DATE_FORMAT`, which
-defaults to `%Y-%m-%d-%a`. This is parsed by [`strftime`][strftime]
-(note that no validation is done by `diary-manager` so be careful).
-You can customize the file extension (defaults to `.md`) by exporting
-`$DIARY_ENTRY_EXTENSION`.
+Before doing anything, you must set `$DIARY_LOCATION` to an existing
+directory, which will hold your diary entries.
 
-## Version control
+In this directory, the filenames of entries are determined by
+concatenating the date and an extension. The date is formatted using
+[strftime] with `$DIARY_DATE_FORMAT` (defaults to `%Y-%m-%d-%a`). The
+extension is given by `$DIARY_ENTRY_EXTENSION` (defaults to `.md`).
 
-`diary-manager` automatically creates a Git commit on every edit if
-the `$DIARY_LOCATION` directory is inside a Git repository and Git is
-installed on the system. Otherwise, it does nothing. Using Git is
-recommended, since then you have no chance of data loss.
+Entries are edited in `$DIARY_EDITOR`, `$EDITOR`, or `vi(1)` in
+decreasing order of preference.
 
-## Encryption
+## Emacs package
+### Installation
 
-For encrypted diary entries, using [Emacs]
-with [EasyPG Assistant][epa] is recommended. Here is the
-`diary-manager` configuration:
+To install `diary-manager` using [`straight.el`][straight.el], use:
+
+    (straight-use-package
+     '(diary-manager :host git :repo "raxod502/diary-manager"))
+
+To install `diary-manager` using [el-get], use:
+
+    (el-get-bundle raxod502/diary-manager)
+
+To install `diary-manager` using [Quelpa], use:
+
+    (quelpa '(diary-manager :fetcher github :repo "raxod502/diary-manager"))
+
+To install `diary-manager` using [Borg], use:
+
+    M-x borg-assimilate RET diary-manager RET
+        https://github.com/raxod502/diary-manager.git RET
+
+To install `diary-manager` manually, use:
+
+    M-x byte-recompile-directory RET /path/to/diary-manager/ RET
+    M-x update-directory-autoloads RET /path/to/diary-manager/ RET
+    (add-to-list 'load-path "/path/to/diary-manager/")
+    (require 'diary-manager-autoloads)
+
+You cannot install `diary-manager` using `package.el`, since
+`package.el` does not support installing packages from Git
+repositories.
+
+### Usage
+
+The commands are mostly self-explanatory:
+
+* `M-x dm-edit`
+* `M-x dm-find-file`
+* `M-x dm-edit-mode`
+* `M-x dm-remove`
+* `M-x dm-move`
+* `M-x dm-copy`
+* `M-x dm-browse`
+
+The equivalent to the command-line tool's `diary edit` is `M-x
+dm-edit`. This requires `$DIARY_LOCATION` or `dm-diary-location` to be
+set. However, you can also edit an arbitrary file as a diary entry
+using `M-x dm-find-file`. In fact, you can enable `M-x dm-edit-mode`
+from any buffer. This is probably not very useful in most cases,
+however.
+
+`M-x dm-browse` opens Dired on `dm-diary-location`.
+
+### Configuration
+
+The same environment variables are used, but they may be overridden by
+setting Emacs Lisp variables:
+
+* `$DIARY_LOCATION` becomes `dm-diary-location`
+* `$DIARY_DATE_FORMAT` becomes `dm-diary-date-format`
+* `$DIARY_ENTRY_EXTENSION` becomes `dm-diary-entry-extension`
+
+If you don't change the extension from `.md`, you will probably want
+to install the package [markdown-mode]. This can be done
+with [`straight.el`][straight.el]:
+
+    (straight-use-package 'markdown-mode)
+
+## Development
+
+To work on the command-line tool, start by creating a virtualenv and
+then run
+
+    $ pip install -e .
+
+from inside this repository. That will install a `diary` binary to
+your virtualenv, which automatically picks up changes to the `diary`
+script in this repository.
+
+To work on the Emacs package, just install it via `straight.el` and
+hack away. Changes to `diary-manager.el` will take effect without
+further intervention.
+
+## FAQ
+### How can I encrypt my diary entries?
+
+The easiest way is to use Emacs with [EasyPG Assistant][epa]. Start by
+creating a GPG key. In your `$DIARY_LOCATION`, create a file called
+`.dir-locals.el` with the following contents (where `<your key>`
+matches your GPG key; to encrypt to multiple keys instead just use a
+list of strings instead of a single string):
+
+    ((nil . ((epa-file-encrypt-to . "<your key>"))))
+
+Use the following configuration for `diary-manager`:
 
     $ export DIARY_EDITOR='emacsclient --alternate-editor= -nw'
     $ export DIARY_ENTRY_EXTENSION='.md.gpg'
 
-Then put a file `.dir-locals.el` in your `$DIARY_LOCATION` with the
-following contents (where `<your name>` matches your GPG key; to
-encrypt to multiple keys you can just use a list of strings instead of
-a single string):
+### Why does the Emacs package use the prefix `dm`?
 
-    ((nil . ((epa-file-encrypt-to . "<your name>"))))
+Emacs comes with packages `diary-mode` and `diary-lib` which provide
+functions starting with `diary-`. To avoid a conflict, the Emacs
+package for `diary-manager` uses the prefix `diary-manager-` instead,
+which is abbreviated to `dm-`.
 
-You may wish to install package [markdown-mode], or choose a different
-file extension than `.md`.
+If you would like to make a diary entry using `M-x diary` instead of
+`M-x dm-edit`, simply add the following Emacs Lisp code to your
+init-file:
 
-## Development
+    (defalias 'diary #'dm-edit)
 
-    $ git clone https://github.com/raxod502/diary-manager.git
-    $ cd diary-manager
-    $ pip3 install --editable .
-
-This will install a symlink to `diary` in your system's binary
-directory.
-
-[emacs]: https://www.gnu.org/software/emacs/
+[borg]: https://github.com/emacscollective/borg
+[el-get]: https://github.com/dimitri/el-get
 [epa]: https://www.gnu.org/software/emacs/manual/html_mono/epa.html
-[git]: https://git-scm.com/
-[homebrew]: https://brew.sh/
 [markdown-mode]: https://github.com/jrblevin/markdown-mode
+[pip]: https://pip.pypa.io/en/stable/
 [python]: https://www.python.org/
+[quelpa]: https://github.com/quelpa/quelpa
+[straight.el]: https://github.com/raxod502/straight.el
 [strftime]: http://strftime.org/
