@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog].
 
+## Unreleased
+### Fixed
+* Previously, a message was not shown when saving a diary entry with
+  Git. This has been fixed.
+
+## 1.1 (released 2018-03-13)
+### Added
+* Emacs package
+    * User options
+        * `dm-diary-location`
+        * `dm-diary-date-format`
+        * `dm-diary-entry-extension`
+        * `dm-enable-git-integration`
+        * `dm-read-date-function`
+        * `dm-error-buffer-name`
+        * `dm-edit-mode-map`
+        * `dm-edit-mode-message`
+    * Interactive functions
+        * `dm-edit`
+        * `dm-find-file`
+        * `dm-edit-mode`
+        * `dm-remove`
+        * `dm-move`
+        * `dm-copy`
+        * `dm-browse`
+
 ## 1.0 (released 2017-11-24)
 ### Added
 * Python command-line utility for making diary entries
