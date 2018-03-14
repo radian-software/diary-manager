@@ -357,7 +357,8 @@ Diary entries can only be visited correctly using `dm-edit'."
                        (if (dm-git-file-exists-in-head)
                            "Edit"
                          "Create")
-                       entry-name)))
+                       entry-name))
+              (message "Entry %s saved" entry-name))
           (message "No changes")))
        ((equal dm-buffer-original-contents dm-buffer-saved-contents)
         (message "No changes"))
