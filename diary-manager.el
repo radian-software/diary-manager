@@ -7,7 +7,7 @@
 ;; Homepage: https://github.com/raxod502/diary-manager
 ;; Keywords: extensions
 ;; Package-Requires: ((emacs "25"))
-;; Version: 1.1
+;; Version: 1.1.1
 
 ;;; Commentary:
 

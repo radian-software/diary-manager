@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog].
 
-## Unreleased
+## 1.1.1 (released 2018-03-13)
 ### Fixed
 * Previously, a message was not shown when saving a diary entry with
   Git. This has been fixed.
