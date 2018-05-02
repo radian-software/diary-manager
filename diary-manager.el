@@ -362,8 +362,8 @@ Diary entries can only be visited correctly using `dm-edit'."
           (message "No changes")))
        ((equal dm-buffer-original-contents dm-buffer-saved-contents)
         (message "No changes"))
-       (t (message "Entry %s saved" entry-name)))))
-  (kill-buffer))
+       (t (message "Entry %s saved" entry-name)))
+      (kill-buffer))))
 
 (cl-defun dm-discard-entry ()
   "Discard the diary entry in the current buffer."
