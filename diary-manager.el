@@ -206,13 +206,15 @@ This means display a popup and throw to `dm-error'."
 
 (defun dm-validator-program-found (result)
   "Check that the command's executable was found.
-This is a predicate for use with `dm-validate-process'."
+This is a predicate for use with `dm-validate-process'. RESULT is
+as returned by `dm-call-process'."
   (unless (plist-get result :returncode)
     "Command failed"))
 
 (defun dm-validator-command-succeeded (result)
   "Check that the command had a return code of 0.
-This is a predicate for use with `dm-validate-process'."
+This is a predicate for use with `dm-validate-process'. RESULT is
+as returned by `dm-call-process'."
   (unless (= 0 (plist-get result :returncode))
     "Command failed"))
 
@@ -410,7 +412,7 @@ Diary entries can only be visited correctly using `dm-edit'."
     (define-key map (kbd "C-c C-c") #'dm-save-entry)
     (define-key map (kbd "C-c C-k") #'dm-discard-entry)
     map)
-  "Keymap for use in mode `dm-edit-mode'."
+  "Keymap for use in `dm-edit-mode'."
   :group 'diary-manager
   :type 'sexp)
 
