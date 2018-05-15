@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog].
 
+## 1.1.2 (released 2018-05-15)
+### Fixed
+* Previously, `dm-save-entry` would erroneously attempt to kill the
+  buffer when there was an error. This has now been fixed.
+
 ## 1.1.1 (released 2018-03-13)
 ### Fixed
 * Previously, a message was not shown when saving a diary entry with
