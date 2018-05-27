@@ -15,6 +15,7 @@ managing diary entries.
 - [Development](#development)
 - [FAQ](#faq)
   * [How can I encrypt my diary entries?](#how-can-i-encrypt-my-diary-entries)
+  * [How is this different from `diary-lib`?](#how-is-this-different-from-diary-lib)
 
 <!-- tocstop -->
 
