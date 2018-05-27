@@ -160,7 +160,8 @@ keyword argument)."
 (defun diary-manager--format-process-error (message result)
   "Construct an error message string about a failed command.
 MESSAGE is displayed at the beginning; an example is \"Command
-failed\". RESULT is as returned by `diary-manager--call-process'."
+failed\". RESULT is as returned by
+`diary-manager--call-process'."
   (let ((cmd-string (string-join (mapcar #'shell-quote-argument
                                          (plist-get result :args))
                                  " ")))
@@ -206,29 +207,35 @@ This means display a popup and throw to `diary-manager-error'."
 
 (defun diary-manager--validator-program-found (result)
   "Check that the command's executable was found.
-This is a predicate for use with `diary-manager--validate-process'. RESULT is
-as returned by `diary-manager--call-process'."
+This is a predicate for use with
+`diary-manager--validate-process'. RESULT is as returned by
+`diary-manager--call-process'."
   (unless (plist-get result :returncode)
     "Command failed"))
 
 (defun diary-manager--validator-command-succeeded (result)
   "Check that the command had a return code of 0.
-This is a predicate for use with `diary-manager--validate-process'. RESULT is
-as returned by `diary-manager--call-process'."
+This is a predicate for use with
+`diary-manager--validate-process'. RESULT is as returned by
+`diary-manager--call-process'."
   (unless (= 0 (plist-get result :returncode))
     "Command failed"))
 
 (defun diary-manager--run-process (program &rest args)
   "Call PROGRAM with ARGS, and pop up an error if it cannot be run.
-Return value and keyword arguments are as in `diary-manager--call-process'."
+Return value and keyword arguments are as in
+`diary-manager--call-process'."
   (thread-last (apply #'diary-manager--call-process program args)
-    (diary-manager--validate-process #'diary-manager--validator-program-found)))
+    (diary-manager--validate-process
+     #'diary-manager--validator-program-found)))
 
 (defun diary-manager--check-process (program &rest args)
   "Call PROGRAM with ARGS, and pop up an error if it returns non-zero.
-Return value and keyword arguments are as in `diary-manager--call-process'."
+Return value and keyword arguments are as in
+`diary-manager--call-process'."
   (thread-last (apply #'diary-manager--run-process program args)
-    (diary-manager--validate-process #'diary-manager--validator-command-succeeded)))
+    (diary-manager--validate-process
+     #'diary-manager--validator-command-succeeded)))
 
 (defun diary-manager--git-enabled-p ()
   "Return non-nil if `default-directory' is version-controlled with Git.
@@ -236,7 +243,8 @@ Throw an error if it is, but the repository is malformed or Git
 is not installed."
   (when (and diary-manager-enable-git-integration
              (locate-dominating-file default-directory ".git"))
-    (thread-last (diary-manager--check-process "git" "rev-parse" "--is-inside-work-tree")
+    (thread-last (diary-manager--check-process
+                  "git" "rev-parse" "--is-inside-work-tree")
       (diary-manager--validate-process
        (lambda (result)
          (thread-first result
@@ -320,8 +328,8 @@ have been made to the entry.")
 
 (defvar-local diary-manager--buffer-dedicated nil
   "Non-nil if buffer was just created for editing a diary entry.
-This means it can be killed without a problem if `diary-manager-edit-mode'
-fails to be enabled.")
+This means it can be killed without a problem if
+`diary-manager-edit-mode' fails to be enabled.")
 
 (defun diary-manager--update-saved-buffer-contents ()
   "Set `diary-manager--buffer-saved-contents'."
@@ -329,7 +337,8 @@ fails to be enabled.")
 
 (defun diary-manager--ensure-buffer-visiting-diary-entry ()
   "Raise `user-error' if current buffer is not visiting a diary entry.
-Diary entries can only be visited correctly using `diary-manager-edit'."
+Diary entries can only be visited correctly using
+`diary-manager-edit'."
   (unless buffer-file-name
     (user-error "Buffer is not visiting a file"))
   (unless diary-manager-edit-mode
@@ -362,7 +371,8 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
                        entry-name))
               (message "Entry %s saved" entry-name))
           (message "No changes")))
-       ((equal diary-manager--buffer-original-contents diary-manager--buffer-saved-contents)
+       ((equal diary-manager--buffer-original-contents
+               diary-manager--buffer-saved-contents)
         (message "No changes"))
        (t (message "Entry %s saved" entry-name)))
       (kill-buffer))))
@@ -395,10 +405,12 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
                 (setq msg "Saved changes to entry %s discarded"))
             (delete-file buffer-file-name)
             (setq msg "Entry %s discarded"))))
-      (when (and (diary-manager--git-enabled-p) (diary-manager--git-modified-p))
+      (when (and (diary-manager--git-enabled-p)
+                 (diary-manager--git-modified-p))
         (if (diary-manager--git-file-exists-in-head)
             (when (yes-or-no-p "Revert to last commit? ")
-              (diary-manager--check-process "git" "checkout" "--" buffer-file-name)
+              (diary-manager--check-process
+               "git" "checkout" "--" buffer-file-name)
               (setq msg "Entry %s reverted"))
           (when (yes-or-no-p "Delete entry? ")
             (diary-manager--git-rm)
@@ -417,7 +429,8 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
   :type 'sexp)
 
 (defcustom diary-manager-edit-mode-message
-  "Type \\[diary-manager-save-entry] to finish, or \\[diary-manager-discard-entry] to cancel"
+  (concat "Type \\[diary-manager-save-entry] to finish, "
+          "or \\[diary-manager-discard-entry] to cancel")
   "Message displayed when entering `diary-manager-edit-mode'.
 This is passed to `substitute-command-keys' before being
 displayed. If nil, no message is displayed."
@@ -427,9 +440,10 @@ displayed. If nil, no message is displayed."
 ;;;###autoload
 (define-minor-mode diary-manager-edit-mode
   "Minor mode for editing diary entries.
-Use \\[diary-manager-edit] to edit a diary entry in `diary-manager-location', or
-\\[diary-manager-find-file] to edit an arbitrary file as a diary entry.
-Alternatively, you can invoke this mode to "
+Use \\[diary-manager-edit] to edit a diary entry in
+`diary-manager-location', or \\[diary-manager-find-file] to edit
+an arbitrary file as a diary entry. Alternatively, you can invoke
+this mode to "
   :keymap diary-manager-edit-mode-map
   (if diary-manager-edit-mode
       (unwind-protect
@@ -445,7 +459,8 @@ Alternatively, you can invoke this mode to "
             ;; Set up variables.
             (setq diary-manager--buffer-original-contents
                   (and (file-exists-p buffer-file-name) (buffer-string)))
-            (setq diary-manager--buffer-saved-contents diary-manager--buffer-original-contents)
+            (setq diary-manager--buffer-saved-contents
+                  diary-manager--buffer-original-contents)
             ;; Take care of remaining setup.
             (add-hook 'after-save-hook
                       #'diary-manager--update-saved-buffer-contents
@@ -455,13 +470,15 @@ Alternatively, you can invoke this mode to "
             ;; We need to do this when `diary-manager-edit-mode' is non-nil,
             ;; since otherwise the `substitute-command-keys' won't
             ;; work right.
-            (message "%s" (substitute-command-keys diary-manager-edit-mode-message)))
+            (message "%s" (substitute-command-keys
+                           diary-manager-edit-mode-message)))
         (unless diary-manager-edit-mode
           (diary-manager-edit-mode -1)
           (message "Failed to enable `diary-manager-edit-mode'")))
     (if diary-manager--buffer-dedicated
         (kill-buffer)
-      (remove-hook 'after-save-hook #'diary-manager--update-saved-buffer-contents 'local)
+      (remove-hook
+       'after-save-hook #'diary-manager--update-saved-buffer-contents 'local)
       (kill-local-variable 'diary-manager--buffer-date)
       (kill-local-variable 'diary-manager--buffer-original-contents)
       (kill-local-variable 'diary-manager--buffer-saved-contents))))
@@ -471,7 +488,8 @@ Alternatively, you can invoke this mode to "
 ;;;###autoload
 (defun diary-manager-edit (date)
   "Edit the diary entry for DATE.
-Interactively, select DATE using `diary-manager-read-date-function'."
+Interactively, select DATE using
+`diary-manager-read-date-function'."
   (interactive
    (progn
      (diary-manager--ensure-location-set)
@@ -499,7 +517,8 @@ Interactively, select DATE using `read-file-name'."
 ;;;###autoload
 (defun diary-manager-remove (date)
   "Remove the diary entry for DATE.
-Interactively, select DATE using `diary-manager-read-date-function'."
+Interactively, select DATE using
+`diary-manager-read-date-function'."
   (interactive
    (progn
      (diary-manager--ensure-location-set)

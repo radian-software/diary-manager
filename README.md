@@ -157,11 +157,12 @@ The commands are mostly self-explanatory:
 * `M-x diary-manager-browse`
 
 The equivalent to the command-line tool's `diary edit` is `M-x
-diary-manager-edit`. This requires `$DIARY_LOCATION` or `diary-manager-location` to be
-set. However, you can also edit an arbitrary file as a diary entry
-using `M-x diary-manager-find-file`. In fact, you can enable `M-x diary-manager-edit-mode`
-from any buffer. This is probably not very useful in most cases,
-however.
+diary-manager-edit`. This requires `$DIARY_LOCATION` or
+`diary-manager-location` to be set. However, you can also edit an
+arbitrary file as a diary entry using `M-x
+diary-manager-find-file`. In fact, you can enable `M-x
+diary-manager-edit-mode` from any buffer. This is probably not very
+useful in most cases, however.
 
 `M-x diary-manager-browse` opens Dired on `diary-manager-location`.
 
