@@ -39,6 +39,11 @@ longlines:
 	        | grep . && exit 1 || true ;\
 	done
 
+.PHONY: toc
+toc: README.md
+	@echo "[toc] $^"
+	@markdown-toc -i $^
+
 .PHONY: clean
 clean:
 	@echo "[clean]" *.elc

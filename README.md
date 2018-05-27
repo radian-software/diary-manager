@@ -15,7 +15,6 @@ managing diary entries.
 - [Development](#development)
 - [FAQ](#faq)
   * [How can I encrypt my diary entries?](#how-can-i-encrypt-my-diary-entries)
-  * [Why does the Emacs package use the prefix `dm`?](#why-does-the-emacs-package-use-the-prefix-dm)
 
 <!-- tocstop -->
 
