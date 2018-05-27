@@ -38,7 +38,7 @@ put it in a Git repository if you want a version-controlled diary. For
 the command-line tool, export the environment variable
 `$DIARY_LOCATION` to this directory. The Emacs package will use this
 environment variable by default, but you can also set the Emacs user
-option `dm-diary-location`.
+option `diary-manager-diary-location`.
 
 Using the command-line tool, make a diary entry for the current day as
 follows:
@@ -54,7 +54,7 @@ be created.
 Using the Emacs package, make a diary entry for the current day as
 follows:
 
-    M-x dm-edit
+    M-x diary-manager-edit
 
 When you are finished, press `C-c C-c` to save the entry, making a
 commit if `$DIARY_LOCATION` is in a Git repository, and kill the
@@ -148,31 +148,31 @@ repositories.
 
 The commands are mostly self-explanatory:
 
-* `M-x dm-edit`
-* `M-x dm-find-file`
-* `M-x dm-edit-mode`
-* `M-x dm-remove`
-* `M-x dm-move`
-* `M-x dm-copy`
-* `M-x dm-browse`
+* `M-x diary-manager-edit`
+* `M-x diary-manager-find-file`
+* `M-x diary-manager-edit-mode`
+* `M-x diary-manager-remove`
+* `M-x diary-manager-move`
+* `M-x diary-manager-copy`
+* `M-x diary-manager-browse`
 
 The equivalent to the command-line tool's `diary edit` is `M-x
-dm-edit`. This requires `$DIARY_LOCATION` or `dm-diary-location` to be
+diary-manager-edit`. This requires `$DIARY_LOCATION` or `diary-manager-diary-location` to be
 set. However, you can also edit an arbitrary file as a diary entry
-using `M-x dm-find-file`. In fact, you can enable `M-x dm-edit-mode`
+using `M-x diary-manager-find-file`. In fact, you can enable `M-x diary-manager-edit-mode`
 from any buffer. This is probably not very useful in most cases,
 however.
 
-`M-x dm-browse` opens Dired on `dm-diary-location`.
+`M-x diary-manager-browse` opens Dired on `diary-manager-diary-location`.
 
 ### Configuration
 
 The same environment variables are used, but they may be overridden by
 setting Emacs Lisp variables:
 
-* `$DIARY_LOCATION` becomes `dm-diary-location`
-* `$DIARY_DATE_FORMAT` becomes `dm-diary-date-format`
-* `$DIARY_ENTRY_EXTENSION` becomes `dm-diary-entry-extension`
+* `$DIARY_LOCATION` becomes `diary-manager-diary-location`
+* `$DIARY_DATE_FORMAT` becomes `diary-manager-diary-date-format`
+* `$DIARY_ENTRY_EXTENSION` becomes `diary-manager-diary-entry-extension`
 
 If you don't change the extension from `.md`, you will probably want
 to install the package [markdown-mode]. This can be done
@@ -210,19 +210,6 @@ Use the following configuration for `diary-manager`:
 
     $ export DIARY_EDITOR='emacsclient --alternate-editor= -nw'
     $ export DIARY_ENTRY_EXTENSION='.md.gpg'
-
-### Why does the Emacs package use the prefix `dm`?
-
-Emacs comes with packages `diary-mode` and `diary-lib` which provide
-functions starting with `diary-`. To avoid a conflict, the Emacs
-package for `diary-manager` uses the prefix `diary-manager-` instead,
-which is abbreviated to `dm-`.
-
-If you would like to make a diary entry using `M-x diary` instead of
-`M-x dm-edit`, simply add the following Emacs Lisp code to your
-init-file:
-
-    (defalias 'diary #'dm-edit)
 
 [borg]: https://github.com/emacscollective/borg
 [el-get]: https://github.com/dimitri/el-get
