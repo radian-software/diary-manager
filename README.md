@@ -211,10 +211,30 @@ Use the following configuration for `diary-manager`:
     $ export DIARY_EDITOR='emacsclient --alternate-editor= -nw'
     $ export DIARY_ENTRY_EXTENSION='.md.gpg'
 
+### How is this different from `diary-lib`?
+
+[`diary-lib`][diary-lib] is a package which comes bundled with
+Emacs. [Org] has integration with this package.
+
+The word "diary" can mean either an appointment book, or a personal
+journal. `diary-lib` provides a way to keep an appointment book, while
+`diary-manager` provides a way to keep a personal journal.
+
+* `diary-lib` has all diary entries in the same file, while
+  `diary-manager` uses a separate file for each entry.
+* `diary-lib` has specific support for entering and processing
+  structured data relating to appointments and calendar events,
+  whereas `diary-manager` allows you to enter free-form text with no
+  special features.
+* `diary-lib` is approximately 2,500 lines of code, and
+  `diary-manager` is approximately 600.
+
 [borg]: https://github.com/emacscollective/borg
+[diary-lib]: https://www.gnu.org/software/emacs/manual/html_node/emacs/Diary.html
 [el-get]: https://github.com/dimitri/el-get
 [epa]: https://www.gnu.org/software/emacs/manual/html_mono/epa.html
 [markdown-mode]: https://github.com/jrblevin/markdown-mode
+[org]: https://orgmode.org/
 [pip]: https://pip.pypa.io/en/stable/
 [python]: https://www.python.org/
 [quelpa]: https://github.com/quelpa/quelpa
