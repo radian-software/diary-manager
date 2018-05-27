@@ -1,6 +1,7 @@
 **`diary-manager`**: simple command-line tool and Emacs package for
 managing diary entries.
 
+<!-- longlines-start -->
 <!-- toc -->
 
 - [TL;DR](#tldr)
@@ -18,6 +19,7 @@ managing diary entries.
   * [How is this different from `diary-lib`?](#how-is-this-different-from-diary-lib)
 
 <!-- tocstop -->
+<!-- longlines-stop -->
 
 ## TL;DR
 
