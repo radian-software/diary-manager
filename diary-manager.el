@@ -248,7 +248,7 @@ is not installed."
 
 (defun diary-manager--git-file-exists-in-index (&optional file)
   "Return non-nil if FILE exists in the index.
-FILE defaults to `buffer-file-name'."
+FILE defaults to the filename of the current buffer."
   (let ((file (or file buffer-file-name)))
     (thread-first
         (diary-manager--check-process
@@ -260,7 +260,7 @@ FILE defaults to `buffer-file-name'."
 
 (defun diary-manager--git-modified-p (&optional file)
   "Return non-nil if FILE is untracked or changed relative to HEAD.
-FILE defaults to `buffer-file-name'."
+FILE defaults to the filename of the current buffer."
   (let ((file (or file buffer-file-name)))
     (or
      ;; This catches untracked files.
@@ -276,7 +276,7 @@ FILE defaults to `buffer-file-name'."
 
 (defun diary-manager--git-file-exists-in-head (&optional file)
   "Return non-nil if FILE exists in HEAD.
-FILE defaults to `buffer-file-name'."
+FILE defaults to the filename of the current buffer."
   (let ((file (or file buffer-file-name)))
     (thread-first
         (let ((default-directory
@@ -290,7 +290,7 @@ FILE defaults to `buffer-file-name'."
 
 (defun diary-manager--git-rm (&optional file)
   "Use Git to remove FILE from the index and worktree.
-FILE defaults to `buffer-file-name'."
+FILE defaults to the filename of the current buffer."
   (let ((file (or file buffer-file-name)))
     (when (diary-manager--git-file-exists-in-index file)
       (diary-manager--check-process "git" "rm" "--cached" "--" file))
@@ -605,6 +605,7 @@ interactively from the user."
 ;;; diary-manager.el ends here
 
 ;; Local Variables:
+;; checkdoc-verb-check-experimental-flag: nil
 ;; outline-regexp: ";;;;* "
 ;; sentence-end-double-space: nil
 ;; End:
