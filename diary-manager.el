@@ -50,7 +50,6 @@
   (getenv "DIARY_LOCATION")
   "Directory containing diary entries.
 Defaults to the DIARY_LOCATION environment variable, if set."
-  :group 'diary-manager
   :type '(choice
           (directory :tag "Directory")
           (const :tag "Not set" nil)))
@@ -60,19 +59,16 @@ Defaults to the DIARY_LOCATION environment variable, if set."
   "Format string for date in diary entry filenames.
 This is passed to `format-time-string'. Defaults to
 DIARY_DATE_FORMAT environment variable, if set."
-  :group 'diary-manager
   :type 'string)
 
 (defcustom diary-manager-entry-extension
   (or (getenv "DIARY_ENTRY_EXTENSION") ".md")
   "File extension for diary entries.
 Defaults to DIARY_ENTRY_EXTENSION, if set."
-  :group 'diary-manager
   :type 'string)
 
 (defcustom diary-manager-enable-git-integration t
   "Whether to integrate with Git when inside a Git repository."
-  :group 'diary-manager
   :type 'boolean)
 
 ;;;; Utility functions
@@ -104,12 +100,10 @@ PROMPT is a string to display for the prompt."
 It takes one (optional) argument, the prompt to be displayed, and
 returns a date object which may be formatted using
 `format-time-string'."
-  :group 'diary-manager
   :type 'function)
 
 (defcustom diary-manager-error-buffer-name "*diary-manager error*"
   "Name for buffer used to display errors."
-  :group 'diary-manager
   :type 'string)
 
 (defun diary-manager--display-error (message)
@@ -425,7 +419,6 @@ Diary entries can only be visited correctly using
     (define-key map (kbd "C-c C-k") #'diary-manager-discard-entry)
     map)
   "Keymap for use in `diary-manager-edit-mode'."
-  :group 'diary-manager
   :type 'sexp)
 
 (defcustom diary-manager-edit-mode-message
@@ -434,7 +427,6 @@ Diary entries can only be visited correctly using
   "Message displayed when entering `diary-manager-edit-mode'.
 This is passed to `substitute-command-keys' before being
 displayed. If nil, no message is displayed."
-  :group 'diary-manager
   :type 'string)
 
 ;;;###autoload
