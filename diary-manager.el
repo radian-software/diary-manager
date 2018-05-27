@@ -77,12 +77,12 @@ Defaults to DIARY_ENTRY_EXTENSION, if set."
 
 ;;;; Utility functions
 
-(defun diary-manager-ensure-location-set ()
+(defun diary-manager--ensure-location-set ()
   "If `diary-manager-location' is not set, raise `user-error'."
   (unless diary-manager-location
     (user-error "Please set `diary-manager-location' first")))
 
-(defun diary-manager-ensure-org-read-date-defined ()
+(defun diary-manager--ensure-org-read-date-defined ()
   "Load `org'. If it does not define `org-read-date', raise `error'."
   (require 'org)
   (unless (fboundp 'org-read-date)
@@ -91,7 +91,7 @@ Defaults to DIARY_ENTRY_EXTENSION, if set."
 (defun diary-manager-read-date (&optional prompt)
   "Interactively select a date using `org-read-date'.
 PROMPT is a string to display for the prompt."
-  (diary-manager-ensure-org-read-date-defined)
+  (diary-manager--ensure-org-read-date-defined)
   (apply #'encode-time
          (cl-mapcar
           (lambda (date-comp default-comp)
@@ -108,11 +108,11 @@ returns a date object which may be formatted using
   :type 'function)
 
 (defcustom diary-manager-error-buffer-name "*diary-manager error*"
-  "Name for buffer used by `diary-manager-error-popup' to display errors."
+  "Name for buffer used to display errors."
   :group 'diary-manager
   :type 'string)
 
-(defun diary-manager-error-popup (message)
+(defun diary-manager--display-error (message)
   "Pop up a temporary buffer in `special-mode' displaying MESSAGE.
 The name of the buffer used is controlled by
 `diary-manager-error-buffer-name'."
@@ -123,7 +123,7 @@ The name of the buffer used is controlled by
     (special-mode)
     (pop-to-buffer (current-buffer))))
 
-(defun diary-manager-call-process (program &rest args)
+(defun diary-manager--call-process (program &rest args)
   "Call PROGRAM with ARGS.
 ARGS may be followed by keyword arguments, as follows. `:output'
 may be `:stdout' (capture stdout), `:stderr' (capture stderr),
@@ -157,10 +157,10 @@ keyword argument)."
                 :returncode ,returncode
                 :output ,(and output-mode (buffer-string)))))))
 
-(defun diary-manager-format-process-error (message result)
+(defun diary-manager--format-process-error (message result)
   "Construct an error message string about a failed command.
 MESSAGE is displayed at the beginning; an example is \"Command
-failed\". RESULT is as returned by `diary-manager-call-process'."
+failed\". RESULT is as returned by `diary-manager--call-process'."
   (let ((cmd-string (string-join (mapcar #'shell-quote-argument
                                          (plist-get result :args))
                                  " ")))
@@ -195,49 +195,49 @@ failed\". RESULT is as returned by `diary-manager-call-process'."
       (format "%s [command not found]: %s\n"
               message cmd-string))))
 
-(defun diary-manager-validate-process (pred result)
+(defun diary-manager--validate-process (pred result)
   "If PRED applied to RESULT returns a message, throw an error.
 This means display a popup and throw to `diary-manager-error'."
   (when-let ((message (funcall pred result)))
-    (diary-manager-error-popup (diary-manager-format-process-error
-                                message result))
+    (diary-manager--display-error (diary-manager--format-process-error
+                                   message result))
     (throw 'diary-manager-error nil))
   result)
 
-(defun diary-manager-validator-program-found (result)
+(defun diary-manager--validator-program-found (result)
   "Check that the command's executable was found.
-This is a predicate for use with `diary-manager-validate-process'. RESULT is
-as returned by `diary-manager-call-process'."
+This is a predicate for use with `diary-manager--validate-process'. RESULT is
+as returned by `diary-manager--call-process'."
   (unless (plist-get result :returncode)
     "Command failed"))
 
-(defun diary-manager-validator-command-succeeded (result)
+(defun diary-manager--validator-command-succeeded (result)
   "Check that the command had a return code of 0.
-This is a predicate for use with `diary-manager-validate-process'. RESULT is
-as returned by `diary-manager-call-process'."
+This is a predicate for use with `diary-manager--validate-process'. RESULT is
+as returned by `diary-manager--call-process'."
   (unless (= 0 (plist-get result :returncode))
     "Command failed"))
 
-(defun diary-manager-run-process (program &rest args)
+(defun diary-manager--run-process (program &rest args)
   "Call PROGRAM with ARGS, and pop up an error if it cannot be run.
-Return value and keyword arguments are as in `diary-manager-call-process'."
-  (thread-last (apply #'diary-manager-call-process program args)
-    (diary-manager-validate-process #'diary-manager-validator-program-found)))
+Return value and keyword arguments are as in `diary-manager--call-process'."
+  (thread-last (apply #'diary-manager--call-process program args)
+    (diary-manager--validate-process #'diary-manager--validator-program-found)))
 
-(defun diary-manager-check-process (program &rest args)
+(defun diary-manager--check-process (program &rest args)
   "Call PROGRAM with ARGS, and pop up an error if it returns non-zero.
-Return value and keyword arguments are as in `diary-manager-call-process'."
-  (thread-last (apply #'diary-manager-run-process program args)
-    (diary-manager-validate-process #'diary-manager-validator-command-succeeded)))
+Return value and keyword arguments are as in `diary-manager--call-process'."
+  (thread-last (apply #'diary-manager--run-process program args)
+    (diary-manager--validate-process #'diary-manager--validator-command-succeeded)))
 
-(defun diary-manager-git-enabled-p ()
+(defun diary-manager--git-enabled-p ()
   "Return non-nil if `default-directory' is version-controlled with Git.
 Throw an error if it is, but the repository is malformed or Git
 is not installed."
   (when (and diary-manager-enable-git-integration
              (locate-dominating-file default-directory ".git"))
-    (thread-last (diary-manager-check-process "git" "rev-parse" "--is-inside-work-tree")
-      (diary-manager-validate-process
+    (thread-last (diary-manager--check-process "git" "rev-parse" "--is-inside-work-tree")
+      (diary-manager--validate-process
        (lambda (result)
          (thread-first result
            (plist-get :output)
@@ -246,88 +246,88 @@ is not installed."
            (unless "Unexpected output")))))
     t))
 
-(defun diary-manager-git-file-exists-in-index (&optional file)
+(defun diary-manager--git-file-exists-in-index (&optional file)
   "Return non-nil if FILE exists in the index.
 FILE defaults to `buffer-file-name'."
   (let ((file (or file buffer-file-name)))
     (thread-first
-        (diary-manager-check-process
+        (diary-manager--check-process
          "git" "ls-files" "--" file
          :output :stdout)
       (plist-get :output)
       (string-empty-p)
       (not))))
 
-(defun diary-manager-git-modified-p (&optional file)
+(defun diary-manager--git-modified-p (&optional file)
   "Return non-nil if FILE is untracked or changed relative to HEAD.
 FILE defaults to `buffer-file-name'."
   (let ((file (or file buffer-file-name)))
     (or
      ;; This catches untracked files.
      (and (file-exists-p file)
-          (not (diary-manager-git-file-exists-in-index file)))
+          (not (diary-manager--git-file-exists-in-index file)))
      ;; This catches everything else.
      (thread-first
-         (diary-manager-run-process
+         (diary-manager--run-process
           "git" "diff" "--exit-code" "HEAD" "--"
           file)
        (plist-get :returncode)
        (/= 0)))))
 
-(defun diary-manager-git-file-exists-in-head (&optional file)
+(defun diary-manager--git-file-exists-in-head (&optional file)
   "Return non-nil if FILE exists in HEAD.
 FILE defaults to `buffer-file-name'."
   (let ((file (or file buffer-file-name)))
     (thread-first
         (let ((default-directory
                 (file-name-directory file)))
-          (diary-manager-run-process
+          (diary-manager--run-process
            "git" "cat-file" "-e"
            (concat "HEAD:./"
                    (file-name-nondirectory file))))
       (plist-get :returncode)
       (= 0))))
 
-(defun diary-manager-git-rm (&optional file)
+(defun diary-manager--git-rm (&optional file)
   "Use Git to remove FILE from the index and worktree.
 FILE defaults to `buffer-file-name'."
   (let ((file (or file buffer-file-name)))
-    (when (diary-manager-git-file-exists-in-index file)
-      (diary-manager-check-process "git" "rm" "--cached" "--" file))
+    (when (diary-manager--git-file-exists-in-index file)
+      (diary-manager--check-process "git" "rm" "--cached" "--" file))
     (delete-file file)))
 
 ;;;; Minor mode
 
 (defvar diary-manager-edit-mode)
 
-(defvar-local diary-manager-buffer-date nil
+(defvar-local diary-manager--buffer-date nil
   "Date for the current buffer's diary entry, or nil.
 This is used internally by `diary-manager' to construct a commit
 message when the entry is completed, if Git integration is
 enabled.")
 
-(defvar-local diary-manager-buffer-original-contents nil
+(defvar-local diary-manager--buffer-original-contents nil
   "Original contents of the current buffer's diary entry.
 This is a string or nil (if the entry did not previously exist).
 It is used internally by `diary-manager' to determine whether
 changes have been made to the entry.")
 
-(defvar-local diary-manager-buffer-saved-contents nil
+(defvar-local diary-manager--buffer-saved-contents nil
   "Current saved contents of the current buffer's diary entry.
 This is a string or nil (if the entry has not been saved). It is
 used internally by `diary-manager' to determine whether changes
 have been made to the entry.")
 
-(defvar-local diary-manager-buffer-dedicated nil
+(defvar-local diary-manager--buffer-dedicated nil
   "Non-nil if buffer was just created for editing a diary entry.
 This means it can be killed without a problem if `diary-manager-edit-mode'
 fails to be enabled.")
 
-(defun diary-manager-update-saved-buffer-contents ()
-  "Set `diary-manager-buffer-saved-contents'."
-  (setq diary-manager-buffer-saved-contents (buffer-string)))
+(defun diary-manager--update-saved-buffer-contents ()
+  "Set `diary-manager--buffer-saved-contents'."
+  (setq diary-manager--buffer-saved-contents (buffer-string)))
 
-(defun diary-manager-ensure-buffer-visiting-diary-entry ()
+(defun diary-manager--ensure-buffer-visiting-diary-entry ()
   "Raise `user-error' if current buffer is not visiting a diary entry.
 Diary entries can only be visited correctly using `diary-manager-edit'."
   (unless buffer-file-name
@@ -338,31 +338,31 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
 (cl-defun diary-manager-save-entry ()
   "Save the diary entry in the current buffer."
   (interactive)
-  (diary-manager-ensure-buffer-visiting-diary-entry)
+  (diary-manager--ensure-buffer-visiting-diary-entry)
   (save-buffer)
-  (let ((entry-name (if diary-manager-buffer-date
+  (let ((entry-name (if diary-manager--buffer-date
                         (concat "for " (format-time-string
                                         diary-manager-date-format
-                                        diary-manager-buffer-date))
+                                        diary-manager--buffer-date))
                       (format "'%s'"
                               (file-name-nondirectory
                                buffer-file-name)))))
     (catch 'diary-manager-error
       (cond
-       ((diary-manager-git-enabled-p)
-        (if (diary-manager-git-modified-p)
+       ((diary-manager--git-enabled-p)
+        (if (diary-manager--git-modified-p)
             (progn
-              (diary-manager-check-process "git" "add" buffer-file-name)
-              (diary-manager-check-process
+              (diary-manager--check-process "git" "add" buffer-file-name)
+              (diary-manager--check-process
                "git" "commit" "-m"
                (format "%s entry %s"
-                       (if (diary-manager-git-file-exists-in-head)
+                       (if (diary-manager--git-file-exists-in-head)
                            "Edit"
                          "Create")
                        entry-name))
               (message "Entry %s saved" entry-name))
           (message "No changes")))
-       ((equal diary-manager-buffer-original-contents diary-manager-buffer-saved-contents)
+       ((equal diary-manager--buffer-original-contents diary-manager--buffer-saved-contents)
         (message "No changes"))
        (t (message "Entry %s saved" entry-name)))
       (kill-buffer))))
@@ -370,11 +370,11 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
 (cl-defun diary-manager-discard-entry ()
   "Discard the diary entry in the current buffer."
   (interactive)
-  (diary-manager-ensure-buffer-visiting-diary-entry)
-  (let ((entry-name (if diary-manager-buffer-date
+  (diary-manager--ensure-buffer-visiting-diary-entry)
+  (let ((entry-name (if diary-manager--buffer-date
                         (concat "for " (format-time-string
                                         diary-manager-date-format
-                                        diary-manager-buffer-date))
+                                        diary-manager--buffer-date))
                       (format "'%s'"
                               (file-name-nondirectory
                                buffer-file-name))))
@@ -384,24 +384,24 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
         (if (yes-or-no-p "Discard unsaved changes? ")
             (setq msg "Unsaved changes to entry %s discarded")
           (cl-return-from diary-manager-discard-entry)))
-      (unless (equal diary-manager-buffer-original-contents
-                     diary-manager-buffer-saved-contents)
+      (unless (equal diary-manager--buffer-original-contents
+                     diary-manager--buffer-saved-contents)
         (when (yes-or-no-p "Discard saved changes? ")
-          (if diary-manager-buffer-original-contents
+          (if diary-manager--buffer-original-contents
               (progn
                 (erase-buffer)
-                (insert diary-manager-buffer-original-contents)
+                (insert diary-manager--buffer-original-contents)
                 (save-buffer)
                 (setq msg "Saved changes to entry %s discarded"))
             (delete-file buffer-file-name)
             (setq msg "Entry %s discarded"))))
-      (when (and (diary-manager-git-enabled-p) (diary-manager-git-modified-p))
-        (if (diary-manager-git-file-exists-in-head)
+      (when (and (diary-manager--git-enabled-p) (diary-manager--git-modified-p))
+        (if (diary-manager--git-file-exists-in-head)
             (when (yes-or-no-p "Revert to last commit? ")
-              (diary-manager-check-process "git" "checkout" "--" buffer-file-name)
+              (diary-manager--check-process "git" "checkout" "--" buffer-file-name)
               (setq msg "Entry %s reverted"))
           (when (yes-or-no-p "Delete entry? ")
-            (diary-manager-git-rm)
+            (diary-manager--git-rm)
             (setq msg "Entry %s deleted"))))
       (set-buffer-modified-p nil)
       (kill-buffer)
@@ -441,14 +441,14 @@ Alternatively, you can invoke this mode to "
             ;; Validate that we can perform editing.
             (unless buffer-file-name
               (user-error "Buffer is not visiting a file"))
-            (diary-manager-git-enabled-p)
+            (diary-manager--git-enabled-p)
             ;; Set up variables.
-            (setq diary-manager-buffer-original-contents
+            (setq diary-manager--buffer-original-contents
                   (and (file-exists-p buffer-file-name) (buffer-string)))
-            (setq diary-manager-buffer-saved-contents diary-manager-buffer-original-contents)
+            (setq diary-manager--buffer-saved-contents diary-manager--buffer-original-contents)
             ;; Take care of remaining setup.
             (add-hook 'after-save-hook
-                      #'diary-manager-update-saved-buffer-contents
+                      #'diary-manager--update-saved-buffer-contents
                       nil 'local)
             ;; Finish.
             (setq diary-manager-edit-mode t)
@@ -459,12 +459,12 @@ Alternatively, you can invoke this mode to "
         (unless diary-manager-edit-mode
           (diary-manager-edit-mode -1)
           (message "Failed to enable `diary-manager-edit-mode'")))
-    (if diary-manager-buffer-dedicated
+    (if diary-manager--buffer-dedicated
         (kill-buffer)
-      (remove-hook 'after-save-hook #'diary-manager-update-saved-buffer-contents 'local)
-      (kill-local-variable 'diary-manager-buffer-date)
-      (kill-local-variable 'diary-manager-buffer-original-contents)
-      (kill-local-variable 'diary-manager-buffer-saved-contents))))
+      (remove-hook 'after-save-hook #'diary-manager--update-saved-buffer-contents 'local)
+      (kill-local-variable 'diary-manager--buffer-date)
+      (kill-local-variable 'diary-manager--buffer-original-contents)
+      (kill-local-variable 'diary-manager--buffer-saved-contents))))
 
 ;;;; Interactive functions
 
@@ -474,16 +474,16 @@ Alternatively, you can invoke this mode to "
 Interactively, select DATE using `diary-manager-read-date-function'."
   (interactive
    (progn
-     (diary-manager-ensure-location-set)
+     (diary-manager--ensure-location-set)
      (list (funcall diary-manager-read-date-function "[Entry to edit]"))))
-  (diary-manager-ensure-location-set)
+  (diary-manager--ensure-location-set)
   (find-file
    (expand-file-name
     (concat (format-time-string diary-manager-date-format date)
             diary-manager-entry-extension)
     diary-manager-location))
-  (setq diary-manager-buffer-date date)
-  (setq diary-manager-buffer-dedicated t)
+  (setq diary-manager--buffer-date date)
+  (setq diary-manager--buffer-dedicated t)
   (diary-manager-edit-mode +1))
 
 ;;;###autoload
@@ -493,7 +493,7 @@ Interactively, select DATE using `read-file-name'."
   (interactive
    (list (read-file-name "[File to edit] ")))
   (find-file file)
-  (setq diary-manager-buffer-dedicated t)
+  (setq diary-manager--buffer-dedicated t)
   (diary-manager-edit-mode +1))
 
 ;;;###autoload
@@ -502,9 +502,9 @@ Interactively, select DATE using `read-file-name'."
 Interactively, select DATE using `diary-manager-read-date-function'."
   (interactive
    (progn
-     (diary-manager-ensure-location-set)
+     (diary-manager--ensure-location-set)
      (list (funcall diary-manager-read-date-function "[Entry to remove]"))))
-  (diary-manager-ensure-location-set)
+  (diary-manager--ensure-location-set)
   (let* ((entry-name (format-time-string diary-manager-date-format date))
          (filename (expand-file-name
                     (concat entry-name diary-manager-entry-extension))))
@@ -512,16 +512,16 @@ Interactively, select DATE using `diary-manager-read-date-function'."
       (user-error "No entry for %s" entry-name))
     (catch 'diary-manager-error
       (when (yes-or-no-p (format "Delete entry for %s? " entry-name))
-        (if (diary-manager-git-enabled-p)
+        (if (diary-manager--git-enabled-p)
             (progn
-              (diary-manager-git-rm filename)
-              (diary-manager-check-process
+              (diary-manager--git-rm filename)
+              (diary-manager--check-process
                "git" "commit" "-m"
                (format "Delete entry for %s" entry-name)))
           (delete-file buffer-file-name))
         (message "Entry for %s deleted" entry-name)))))
 
-(cl-defun diary-manager-move-or-copy (task &optional old-date new-date)
+(cl-defun diary-manager--move-or-copy (task &optional old-date new-date)
   "Run TASK (`move' or `copy') on OLD-DATE and NEW-DATE.
 This either moves or copies a diary entry. OLD-DATE and NEW-DATE
 can both be nil, in which case they are determined by prompting
@@ -562,9 +562,9 @@ the user."
                      (`copy #'copy-file))
                    src-path dst-path)
           (catch 'diary-manager-error
-            (when (diary-manager-git-enabled-p)
-              (diary-manager-check-process "git" "add" src-path dst-path)
-              (diary-manager-check-process
+            (when (diary-manager--git-enabled-p)
+              (diary-manager--check-process "git" "add" src-path dst-path)
+              (diary-manager--check-process
                "git" "commit" "-m"
                (format "%s entry for %s to %s"
                        (capitalize (symbol-name task))
@@ -582,7 +582,7 @@ the user."
 If either of OLD-DATE and NEW-DATE are not given, they are read
 interactively from the user."
   (interactive)
-  (diary-manager-move-or-copy 'move old-date new-date))
+  (diary-manager--move-or-copy 'move old-date new-date))
 
 ;;;###autoload
 (defun diary-manager-copy (&optional old-date new-date)
@@ -590,7 +590,7 @@ interactively from the user."
 If either of OLD-DATE and NEW-DATE are not given, they are read
 interactively from the user."
   (interactive)
-  (diary-manager-move-or-copy 'copy old-date new-date))
+  (diary-manager--move-or-copy 'copy old-date new-date))
 
 ;;;###autoload
 (defun diary-manager-browse ()
