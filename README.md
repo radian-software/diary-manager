@@ -38,7 +38,7 @@ put it in a Git repository if you want a version-controlled diary. For
 the command-line tool, export the environment variable
 `$DIARY_LOCATION` to this directory. The Emacs package will use this
 environment variable by default, but you can also set the Emacs user
-option `diary-manager-diary-location`.
+option `diary-manager-location`.
 
 Using the command-line tool, make a diary entry for the current day as
 follows:
@@ -157,22 +157,22 @@ The commands are mostly self-explanatory:
 * `M-x diary-manager-browse`
 
 The equivalent to the command-line tool's `diary edit` is `M-x
-diary-manager-edit`. This requires `$DIARY_LOCATION` or `diary-manager-diary-location` to be
+diary-manager-edit`. This requires `$DIARY_LOCATION` or `diary-manager-location` to be
 set. However, you can also edit an arbitrary file as a diary entry
 using `M-x diary-manager-find-file`. In fact, you can enable `M-x diary-manager-edit-mode`
 from any buffer. This is probably not very useful in most cases,
 however.
 
-`M-x diary-manager-browse` opens Dired on `diary-manager-diary-location`.
+`M-x diary-manager-browse` opens Dired on `diary-manager-location`.
 
 ### Configuration
 
 The same environment variables are used, but they may be overridden by
 setting Emacs Lisp variables:
 
-* `$DIARY_LOCATION` becomes `diary-manager-diary-location`
-* `$DIARY_DATE_FORMAT` becomes `diary-manager-diary-date-format`
-* `$DIARY_ENTRY_EXTENSION` becomes `diary-manager-diary-entry-extension`
+* `$DIARY_LOCATION` becomes `diary-manager-location`
+* `$DIARY_DATE_FORMAT` becomes `diary-manager-date-format`
+* `$DIARY_ENTRY_EXTENSION` becomes `diary-manager-entry-extension`
 
 If you don't change the extension from `.md`, you will probably want
 to install the package [markdown-mode]. This can be done

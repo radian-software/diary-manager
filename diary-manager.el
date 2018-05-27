@@ -46,7 +46,7 @@
   :group 'applications
   :prefix "diary-manager-")
 
-(defcustom diary-manager-diary-location
+(defcustom diary-manager-location
   (getenv "DIARY_LOCATION")
   "Directory containing diary entries.
 Defaults to the DIARY_LOCATION environment variable, if set."
@@ -55,7 +55,7 @@ Defaults to the DIARY_LOCATION environment variable, if set."
           (directory :tag "Directory")
           (const :tag "Not set" nil)))
 
-(defcustom diary-manager-diary-date-format
+(defcustom diary-manager-date-format
   (or (getenv "DIARY_DATE_FORMAT") "%Y-%m-%d-%a")
   "Format string for date in diary entry filenames.
 This is passed to `format-time-string'. Defaults to
@@ -63,7 +63,7 @@ DIARY_DATE_FORMAT environment variable, if set."
   :group 'diary-manager
   :type 'string)
 
-(defcustom diary-manager-diary-entry-extension
+(defcustom diary-manager-entry-extension
   (or (getenv "DIARY_ENTRY_EXTENSION") ".md")
   "File extension for diary entries.
 Defaults to DIARY_ENTRY_EXTENSION, if set."
@@ -77,10 +77,10 @@ Defaults to DIARY_ENTRY_EXTENSION, if set."
 
 ;;;; Utility functions
 
-(defun diary-manager-ensure-diary-manager-diary-location-set ()
-  "If `diary-manager-diary-location' is not set, raise `user-error'."
-  (unless diary-manager-diary-location
-    (user-error "Please set `diary-manager-diary-location' first")))
+(defun diary-manager-ensure-location-set ()
+  "If `diary-manager-location' is not set, raise `user-error'."
+  (unless diary-manager-location
+    (user-error "Please set `diary-manager-location' first")))
 
 (defun diary-manager-ensure-org-read-date-defined ()
   "Load `org'. If it does not define `org-read-date', raise `error'."
@@ -342,7 +342,7 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
   (save-buffer)
   (let ((entry-name (if diary-manager-buffer-date
                         (concat "for " (format-time-string
-                                        diary-manager-diary-date-format
+                                        diary-manager-date-format
                                         diary-manager-buffer-date))
                       (format "'%s'"
                               (file-name-nondirectory
@@ -373,7 +373,7 @@ Diary entries can only be visited correctly using `diary-manager-edit'."
   (diary-manager-ensure-buffer-visiting-diary-entry)
   (let ((entry-name (if diary-manager-buffer-date
                         (concat "for " (format-time-string
-                                        diary-manager-diary-date-format
+                                        diary-manager-date-format
                                         diary-manager-buffer-date))
                       (format "'%s'"
                               (file-name-nondirectory
@@ -427,7 +427,7 @@ displayed. If nil, no message is displayed."
 ;;;###autoload
 (define-minor-mode diary-manager-edit-mode
   "Minor mode for editing diary entries.
-Use \\[diary-manager-edit] to edit a diary entry in `diary-manager-diary-location', or
+Use \\[diary-manager-edit] to edit a diary entry in `diary-manager-location', or
 \\[diary-manager-find-file] to edit an arbitrary file as a diary entry.
 Alternatively, you can invoke this mode to "
   :keymap diary-manager-edit-mode-map
@@ -474,14 +474,14 @@ Alternatively, you can invoke this mode to "
 Interactively, select DATE using `diary-manager-read-date-function'."
   (interactive
    (progn
-     (diary-manager-ensure-diary-manager-diary-location-set)
+     (diary-manager-ensure-location-set)
      (list (funcall diary-manager-read-date-function "[Entry to edit]"))))
-  (diary-manager-ensure-diary-manager-diary-location-set)
+  (diary-manager-ensure-location-set)
   (find-file
    (expand-file-name
-    (concat (format-time-string diary-manager-diary-date-format date)
-            diary-manager-diary-entry-extension)
-    diary-manager-diary-location))
+    (concat (format-time-string diary-manager-date-format date)
+            diary-manager-entry-extension)
+    diary-manager-location))
   (setq diary-manager-buffer-date date)
   (setq diary-manager-buffer-dedicated t)
   (diary-manager-edit-mode +1))
@@ -502,12 +502,12 @@ Interactively, select DATE using `read-file-name'."
 Interactively, select DATE using `diary-manager-read-date-function'."
   (interactive
    (progn
-     (diary-manager-ensure-diary-manager-diary-location-set)
+     (diary-manager-ensure-location-set)
      (list (funcall diary-manager-read-date-function "[Entry to remove]"))))
-  (diary-manager-ensure-diary-manager-diary-location-set)
-  (let* ((entry-name (format-time-string diary-manager-diary-date-format date))
+  (diary-manager-ensure-location-set)
+  (let* ((entry-name (format-time-string diary-manager-date-format date))
          (filename (expand-file-name
-                    (concat entry-name diary-manager-diary-entry-extension))))
+                    (concat entry-name diary-manager-entry-extension))))
     (unless (file-exists-p filename)
       (user-error "No entry for %s" entry-name))
     (catch 'diary-manager-error
@@ -533,10 +533,10 @@ the user."
           (funcall diary-manager-read-date-function
                    (format "[Entry to %s]"
                            (symbol-name task)))))
-  (let* ((src-name (format-time-string diary-manager-diary-date-format old-date))
+  (let* ((src-name (format-time-string diary-manager-date-format old-date))
          (src-path (expand-file-name
-                    (concat src-name diary-manager-diary-entry-extension)
-                    diary-manager-diary-location)))
+                    (concat src-name diary-manager-entry-extension)
+                    diary-manager-location)))
     (unless (file-exists-p src-path)
       (user-error "No entry for %s" src-name))
     (unless new-date
@@ -544,10 +544,10 @@ the user."
             (funcall diary-manager-read-date-function
                      (format "[Destination for %s]"
                              (symbol-name task)))))
-    (let* ((dst-name (format-time-string diary-manager-diary-date-format new-date))
+    (let* ((dst-name (format-time-string diary-manager-date-format new-date))
            (dst-path (expand-file-name
-                      (concat dst-name diary-manager-diary-entry-extension)
-                      diary-manager-diary-location)))
+                      (concat dst-name diary-manager-entry-extension)
+                      diary-manager-location)))
       (when (string= src-path dst-path)
         (user-error "Cannot move `%s' to itself" src-path))
       (when (yes-or-no-p
@@ -594,9 +594,9 @@ interactively from the user."
 
 ;;;###autoload
 (defun diary-manager-browse ()
-  "Open Dired on `diary-manager-diary-location'."
+  "Open Dired on `diary-manager-location'."
   (interactive)
-  (dired diary-manager-diary-location))
+  (dired diary-manager-location))
 
 ;;;; Closing remarks
 
