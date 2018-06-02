@@ -117,34 +117,13 @@ decreasing order of preference.
 ## Emacs package
 ### Installation
 
-To install `diary-manager` using [`straight.el`][straight.el], use:
+`diary-manager` [is available on MELPA][melpa]. The easiest way to
+install it is using [`straight.el`][straight.el]:
 
-    (straight-use-package
-     '(diary-manager :host git :repo "raxod502/diary-manager"))
+    (straight-use-package 'diary-manager)
 
-To install `diary-manager` using [el-get], use:
-
-    (el-get-bundle raxod502/diary-manager)
-
-To install `diary-manager` using [Quelpa], use:
-
-    (quelpa '(diary-manager :fetcher github :repo "raxod502/diary-manager"))
-
-To install `diary-manager` using [Borg], use:
-
-    M-x borg-assimilate RET diary-manager RET
-        https://github.com/raxod502/diary-manager.git RET
-
-To install `diary-manager` manually, use:
-
-    M-x byte-recompile-directory RET /path/to/diary-manager/ RET
-    M-x update-directory-autoloads RET /path/to/diary-manager/ RET
-    (add-to-list 'load-path "/path/to/diary-manager/")
-    (require 'diary-manager-autoloads)
-
-You cannot install `diary-manager` using `package.el`, since
-`package.el` does not support installing packages from Git
-repositories.
+However, you may install `diary-manager` using any other Emacs package
+manager if you prefer.
 
 ### Usage
 
@@ -237,6 +216,7 @@ journal. `diary-lib` provides a way to keep an appointment book, while
 [el-get]: https://github.com/dimitri/el-get
 [epa]: https://www.gnu.org/software/emacs/manual/html_mono/epa.html
 [markdown-mode]: https://github.com/jrblevin/markdown-mode
+[melpa]: https://melpa.org/#/diary-manager
 [org]: https://orgmode.org/
 [pip]: https://pip.pypa.io/en/stable/
 [python]: https://www.python.org/
