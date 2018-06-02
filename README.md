@@ -32,8 +32,7 @@ tool with [Pip]:
 
 You can install the Emacs package with [`straight.el`][straight.el]:
 
-    (straight-use-package
-     '(diary-manager :host git :repo "raxod502/diary-manager"))
+    (straight-use-package 'diary-manager)
 
 To get started, create a directory to hold your diary entries. You can
 put it in a Git repository if you want a version-controlled diary. For
