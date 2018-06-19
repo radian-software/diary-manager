@@ -6,7 +6,7 @@ setup(
     author_email="radon.neon@gmail.com",
     description="If you want your diary on the command line.",
     license="MIT",
-    install_requires=["dateutils"],
+    install_requires=["python-dateutil"],
     name="diary-manager",
     scripts=["diary"],
     url="https://github.com/raxod502/diary-manager",

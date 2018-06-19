@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog].
 
+## Unreleased
+### Python script
+#### Bugs fixed
+* The `diary-manager` package now correctly depends on the
+  `python-dateutil` package and not the unrelated (but confusingly
+  named) `dateutils` package.
+
 ## 2.0 (released 2018-06-05)
 ### Emacs package
 #### Breaking changes
