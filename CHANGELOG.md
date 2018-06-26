@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog].
 
-## Unreleased
+## 2.0.1 (released 2018-06-26)
 ### Python script
 #### Bugs fixed
 * The `diary-manager` package now correctly depends on the

@@ -10,6 +10,6 @@ setup(
     name="diary-manager",
     scripts=["diary"],
     url="https://github.com/raxod502/diary-manager",
-    version="2.0",
+    version="2.0.1",
     zip_safe=True,
 )
