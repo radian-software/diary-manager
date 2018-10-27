@@ -427,7 +427,9 @@ Diary entries can only be visited correctly using
   "Message displayed when entering `diary-manager-edit-mode'.
 This is passed to `substitute-command-keys' before being
 displayed. If nil, no message is displayed."
-  :type 'string)
+  :type '(choice
+          string
+          (const :tag "No message" nil)))
 
 ;;;###autoload
 (define-minor-mode diary-manager-edit-mode
