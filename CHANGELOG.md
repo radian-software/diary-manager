@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog].
 
+## 2.0.2 (released 2018-12-14)
+### Emacs package
+#### Bugs fixed
+* The Custom type for `diary-manager-edit-mode-message` previously
+  specified its value to be non-nil, contrary to the variable's
+  docstring. This has been corrected.
+
 ## 2.0.1 (released 2018-06-26)
 ### Python script
 #### Bugs fixed
