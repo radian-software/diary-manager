@@ -1,4 +1,4 @@
-;;; diary-manager.el --- Simple personal diary. -*- lexical-binding: t -*-
+;;; diary-manager.el --- Simple personal diary -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2017 Radon Rosborough
 
