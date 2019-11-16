@@ -1,14 +1,26 @@
+VERSION ?=
+CMD ?=
+
 EMACS ?= emacs
 
 for_compile := diary-manager.el
 for_checkdoc := diary-manager.el
 for_longlines := $(wildcard *.el *.md *.yml) Makefile
 
-.PHONY: all
-all: compile checkdoc longlines
+.PHONY: help
+help: ## Show this message
+	@echo "usage:" >&2
+	@grep -h "[#]# " $(MAKEFILE_LIST)	| \
+		sed 's/^/  make /'		| \
+		sed 's/:[^#]*[#]# /|/'		| \
+		sed 's/%/LANG/'			| \
+		column -t -s'|' >&2
+
+.PHONY: lint
+lint: compile checkdoc longlines toc ## Run all the linters
 
 .PHONY: compile
-compile:
+compile: ## Byte-compile
 	@for file in $(for_compile); do \
 	    echo "[compile] $$file" ;\
 	    $(EMACS) -Q --batch -L . -L stub -f batch-byte-compile $$file 2>&1 \
@@ -17,7 +29,7 @@ compile:
 	done
 
 .PHONY: checkdoc
-checkdoc:
+checkdoc: ## Check docstring style
 	@for file in $(for_checkdoc); do \
 	    echo "[checkdoc] $$file" ;\
 	    $(EMACS) -Q --batch \
@@ -28,7 +40,7 @@ checkdoc:
 	done
 
 .PHONY: longlines
-longlines:
+longlines: ## Check for long lines
 	@echo "[longlines] $(for_longlines)"
 	@for file in $(for_longlines); do \
 	    cat "$$file" \
@@ -40,11 +52,15 @@ longlines:
 	done
 
 .PHONY: toc
-toc: README.md
+toc: README.md ## Update table of contents in README
 	@echo "[toc] $^"
 	@markdown-toc -i $^
 
 .PHONY: clean
-clean:
+clean: ## Remove build artifacts
 	@echo "[clean]" *.elc
 	@rm -f *.elc
+
+.PHONY: docker
+docker: ## Start a Docker shell; e.g. make docker VERSION=25.3
+	@scripts/docker.bash "$(VERSION)" "$(CMD)"
