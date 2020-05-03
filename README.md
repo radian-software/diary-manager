@@ -14,7 +14,7 @@ managing diary entries.
   * [Installation](#installation-1)
   * [Usage](#usage-1)
   * [Configuration](#configuration-1)
-- [Development](#development)
+- [Contributor guide](#contributor-guide)
 - [FAQ](#faq)
   * [How can I encrypt my diary entries?](#how-can-i-encrypt-my-diary-entries)
   * [How is this different from `diary-lib`?](#how-is-this-different-from-diary-lib)
@@ -163,7 +163,10 @@ with [`straight.el`][straight.el]:
 
     (straight-use-package 'markdown-mode)
 
-## Development
+## Contributor guide
+
+Please see [the contributor guide for my
+projects](https://github.com/raxod502/contributor-guide).
 
 To work on the command-line tool, start by creating a virtualenv and
 then run
