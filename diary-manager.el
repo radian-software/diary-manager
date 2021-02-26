@@ -620,6 +620,5 @@ interactively from the user."
 
 ;; Local Variables:
 ;; checkdoc-verb-check-experimental-flag: nil
-;; outline-regexp: ";;;;* "
 ;; sentence-end-double-space: nil
 ;; End:
