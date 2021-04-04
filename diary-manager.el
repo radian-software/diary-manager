@@ -438,7 +438,8 @@ displayed. If nil, no message is displayed."
 Use \\[diary-manager-edit] to edit a diary entry in
 `diary-manager-location', or \\[diary-manager-find-file] to edit
 an arbitrary file as a diary entry. Alternatively, you can invoke
-this mode to "
+this mode to enable `diary-manager' keybindings in a file you've
+already opened."
   :keymap diary-manager-edit-mode-map
   (if diary-manager-edit-mode
       (unwind-protect
