@@ -1,10 +1,10 @@
 ;;; diary-manager.el --- Simple personal diary -*- lexical-binding: t -*-
 
-;; Copyright (C) 2017 Radon Rosborough
+;; Copyright (C) 2017-2022 Radian LLC and contributors
 
-;; Author: Radon Rosborough <radon.neon@gmail.com>
+;; Author: Radian LLC <contact+diary-manager@radian.codes>
 ;; Created: 28 Dec 2017
-;; Homepage: https://github.com/raxod502/diary-manager
+;; Homepage: https://github.com/radian-software/diary-manager
 ;; Keywords: extensions
 ;; Package-Requires: ((emacs "25"))
 ;; SPDX-License-Identifier: MIT
@@ -18,8 +18,8 @@
 ;; command line. diary-manager.el provides an alternative Emacs
 ;; interface.
 
-;; Please see https://github.com/raxod502/diary-manager for more
-;; information.
+;; Please see https://github.com/radian-software/diary-manager for
+;; more information.
 
 ;;; Code:
 

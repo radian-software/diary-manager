@@ -30,7 +30,7 @@ diary entries. It comes with a command-line tool and an Emacs package;
 both expose the same functionality. You can install the command-line
 tool with [Pip]:
 
-    $ pip3 install git+https://github.com/raxod502/diary-manager.git
+    $ pip3 install git+https://github.com/radian-software/diary-manager.git
 
 You can install the Emacs package with [`straight.el`][straight.el]:
 
@@ -69,7 +69,7 @@ buffer.
 First, you will need to install [Python 3][python] and [Pip]. Then,
 you may run the following command to install the command-line tool:
 
-    $ pip3 install git+https://github.com/raxod502/diary-manager.git
+    $ pip3 install git+https://github.com/radian-software/diary-manager.git
 
 This will install a binary named `diary`.
 
@@ -166,7 +166,7 @@ with [`straight.el`][straight.el]:
 ## Contributor guide
 
 Please see [the contributor guide for my
-projects](https://github.com/raxod502/contributor-guide).
+projects](https://github.com/radian-software/contributor-guide).
 
 To work on the command-line tool, start by creating a virtualenv and
 then run
