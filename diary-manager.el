@@ -72,6 +72,11 @@ Defaults to DIARY_ENTRY_EXTENSION, if set."
   "Whether to integrate with Git when inside a Git repository."
   :type 'boolean)
 
+(defcustom diary-manager-template
+  (or (getenv "DIARY_ENTRY_TEMPLATE") "template")
+  "Copy template of dominant questions."
+  :type 'string)
+
 ;;;; Utility functions
 
 (defun diary-manager--ensure-location-set ()
@@ -190,6 +195,14 @@ failed\". RESULT is as returned by
                                  output))))))
       (format "%s [command not found]: %s\n"
               message cmd-string))))
+
+(defun diary-manager--get-filename (date)
+  "Get filename based on DATE."
+  (expand-file-name
+   (concat (format-time-string diary-manager-date-format date)
+           diary-manager-entry-extension)
+   diary-manager-location)
+  )
 
 (defun diary-manager--validate-process (pred result)
   "If PRED applied to RESULT returns a message, throw an error.
@@ -490,13 +503,23 @@ Interactively, select DATE using
    (progn
      (diary-manager--ensure-location-set)
      (list (funcall diary-manager-read-date-function "[Entry to edit]"))))
-  (diary-manager--ensure-location-set)
-  (find-file
-   (expand-file-name
-    (concat (format-time-string diary-manager-date-format date)
-            diary-manager-entry-extension)
-    diary-manager-location))
   (setq diary-manager--buffer-date date)
+  (diary-manager--ensure-location-set)
+  (let (
+        (filename (diary-manager--get-filename diary-manager--buffer-date))
+        (templatefile
+         (expand-file-name (concat diary-manager-template diary-manager-entry-extension)  diary-manager-location)
+         )
+        )
+    (if (file-exists-p templatefile)
+        (unless (and (file-exists-p filename))
+          (copy-file
+           templatefile
+           filename)
+          )
+      )
+    (find-file filename)
+    )
   (setq diary-manager--buffer-dedicated t)
   (diary-manager-edit-mode +1))
 
