@@ -511,14 +511,14 @@ Interactively, select DATE using
          (expand-file-name (concat diary-manager-template diary-manager-entry-extension)  diary-manager-location)
          )
         )
+    (find-file filename)
     (if (file-exists-p templatefile)
-        (unless (and (file-exists-p filename))
-          (copy-file
+        (unless (file-exists-p filename)
+          (insert-file-contents
            templatefile
-           filename)
+           nil)
           )
       )
-    (find-file filename)
     )
   (setq diary-manager--buffer-dedicated t)
   (diary-manager-edit-mode +1))
