@@ -74,7 +74,9 @@ Defaults to DIARY_ENTRY_EXTENSION, if set."
 
 (defcustom diary-manager-template
   (or (getenv "DIARY_ENTRY_TEMPLATE") "template")
-  "Copy template of dominant questions."
+  "Filename for template to initialize new diary entries with.
+This will have `diary-manager-entry-extension' appended to it,
+and is interpreted relative to `diary-manager-location'."
   :type 'string)
 
 ;;;; Utility functions
@@ -197,12 +199,11 @@ failed\". RESULT is as returned by
               message cmd-string))))
 
 (defun diary-manager--get-filename (date)
-  "Get filename based on DATE."
+  "Get filename based on DATE. Return an absolute filepath."
   (expand-file-name
    (concat (format-time-string diary-manager-date-format date)
            diary-manager-entry-extension)
-   diary-manager-location)
-  )
+   diary-manager-location))
 
 (defun diary-manager--validate-process (pred result)
   "If PRED applied to RESULT returns a message, throw an error.
@@ -505,21 +506,15 @@ Interactively, select DATE using
      (list (funcall diary-manager-read-date-function "[Entry to edit]"))))
   (setq diary-manager--buffer-date date)
   (diary-manager--ensure-location-set)
-  (let (
-        (filename (diary-manager--get-filename diary-manager--buffer-date))
+  (let ((filename (diary-manager--get-filename diary-manager--buffer-date))
         (templatefile
-         (expand-file-name (concat diary-manager-template diary-manager-entry-extension)  diary-manager-location)
-         )
-        )
+         (expand-file-name
+          (concat diary-manager-template diary-manager-entry-extension)
+          diary-manager-location)))
     (find-file filename)
-    (if (file-exists-p templatefile)
-        (unless (file-exists-p filename)
-          (insert-file-contents
-           templatefile
-           nil)
-          )
-      )
-    )
+    (when (and (zerop (buffer-size))
+               (file-exists-p templatefile))
+      (insert-file-contents templatefile nil)))
   (setq diary-manager--buffer-dedicated t)
   (diary-manager-edit-mode +1))
 
