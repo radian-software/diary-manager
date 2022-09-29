@@ -156,12 +156,19 @@ setting Emacs Lisp variables:
 * `$DIARY_LOCATION` becomes `diary-manager-location`
 * `$DIARY_DATE_FORMAT` becomes `diary-manager-date-format`
 * `$DIARY_ENTRY_EXTENSION` becomes `diary-manager-entry-extension`
+* `$DIARY_TEMPLATE` (not available in the Python version) becomes
+  `diary-manager-template`
 
 If you don't change the extension from `.md`, you will probably want
 to install the package [markdown-mode]. This can be done
 with [`straight.el`][straight.el]:
 
     (straight-use-package 'markdown-mode)
+
+Diary templates are a feature unique to the Emacs version. See
+docstring for the user option, but the short version is that they
+allow you to have custom text inserted by default into each new diary
+entry before you start editing it.
 
 ## Contributor guide
 

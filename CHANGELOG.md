@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog].
 
+# Unreleased
+### Emacs package
+#### Features
+* New user option `diary-manager-template` that you can set to a
+  filename (in Elisp or via `$DIARY_ENTRY_TEMPLATE` environment
+  variable) whose contents will be used to populate newly created
+  entries.
+
 ## 2.0.2 (released 2018-12-14)
 ### Emacs package
 #### Bugs fixed
