@@ -1,3 +1,7 @@
+**Maintenance notice:** This project is not actively maintained, but
+pull requests will be reviewed and accepted, and security patches will
+be applied.
+
 **`diary-manager`**: simple command-line tool and Emacs package for
 managing diary entries.
 
